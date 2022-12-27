@@ -42,10 +42,11 @@ const Navbar = () => {
     <Flex
       as="nav"
       sx={{
+        width: '100%',
         paddingTop: 3,
         paddingBottom: 3,
-        paddingX: 5,
-        backgroundColor: 'rgba(0, 0, 0, 0.25)',
+        paddingX: [3, 4, 5],
+        backgroundColor: transparentize('black', 0.3),
         boxShadow: 'box',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -58,15 +59,26 @@ const Navbar = () => {
           color: 'primary',
           fontWeight: 'bold',
           fontSize: '5xl',
+          textShadow: 'text',
         }}
       >
         arantespp.art
       </Text>
-      <Flex sx={{ gap: [4, 4, 5], alignItems: 'end' }}>
+      <Flex
+        sx={{
+          gap: [4, 4, 5],
+          alignItems: 'center',
+        }}
+      >
         <Link href="https://instagram.com/arantespp.art">
           <Image
             src="/instagram.png"
-            sx={{ height: 32, width: 32, cursor: 'pointer' }}
+            sx={{
+              height: 40,
+              width: 40,
+              cursor: 'pointer',
+              boxShadow: 'box',
+            }}
           />
         </Link>
         <Link href="https://arantespp.com/me">
@@ -74,6 +86,7 @@ const Navbar = () => {
             sx={{
               fontSize: '3xl',
               fontWeight: 'bold',
+              textShadow: 'text',
             }}
           >
             Me
@@ -86,40 +99,35 @@ const Navbar = () => {
 
 const Hero = ({ mostLikedMedia, tagline }: Props) => {
   return (
-    <Box
-      sx={{
-        backgroundImage: `url(${mostLikedMedia.mediaUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '60vh',
-        boxShadow: 'box',
-        position: 'relative',
-      }}
-    >
-      <Navbar />
+    <>
+      <Box
+        sx={{
+          backgroundImage: `url(${mostLikedMedia.mediaUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: '50vh',
+          boxShadow: 'box',
+        }}
+      >
+        <Navbar />
+      </Box>
       <Flex
         sx={{
-          top: 0,
-          height: '100%',
           width: '100%',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'absolute',
           paddingX: 2,
         }}
       >
         <Text
           as="h1"
           sx={{
-            color: 'white',
-            fontSize: ['1xl', '3xl', '5xl'],
+            fontSize: ['1xl', '2xl', '3xl'],
             marginX: 2,
-            padding: 2,
-            borderRadius: 'border',
-            backgroundColor: transparentize('#000', 0.25),
-            boxShadow: 'box',
+            marginY: 4,
             fontStyle: 'italic',
-            maxWidth: 1000,
+            textShadow: 'text',
+            maxWidth: 700,
             textAlign: 'center',
             fontWeight: 'normal',
           }}
@@ -127,7 +135,7 @@ const Hero = ({ mostLikedMedia, tagline }: Props) => {
           {tagline}
         </Text>
       </Flex>
-    </Box>
+    </>
   );
 };
 
@@ -212,12 +220,12 @@ const Arts = ({ media }: Props) => {
       sx={{
         flexDirection: 'column',
         alignItems: 'center',
-        marginTop: [4, 5, 6],
+        marginTop: [3, 4, 4],
       }}
     >
       <Heading
         as="h2"
-        sx={{ fontSize: ['4xl', '5xl', '6xl'], textShadow: 'text' }}
+        sx={{ fontSize: ['5xl', '5xl', '6xl'], textShadow: 'text' }}
       >
         Arts
       </Heading>

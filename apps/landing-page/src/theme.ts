@@ -7,7 +7,7 @@ export const fonts = [
 
 export const theme: Theme = {
   colors: {
-    text: '#CCCCCC',
+    text: '#eee',
     background: '#1C2E3D',
     primary: '#FF5F1F',
     secondary: '#FF10F0',
