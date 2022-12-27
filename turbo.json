@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalEnv": ["INSTAGRAM_ACCOUNT_ID", "INSTAGRAM_ACCESS_TOKEN"],
+  "globalEnv": ["INSTAGRAM_ACCOUNT_ID", "INSTAGRAM_ACCESS_TOKEN", "API_KEY"],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"]
