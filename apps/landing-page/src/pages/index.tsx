@@ -77,7 +77,10 @@ const Navbar = () => {
               height: 40,
               width: 40,
               cursor: 'pointer',
-              boxShadow: 'box',
+              boxShadow: 'image',
+              ':hover': {
+                boxShadow: 'box',
+              },
             }}
           />
         </Link>
@@ -87,6 +90,10 @@ const Navbar = () => {
               fontSize: '3xl',
               fontWeight: 'bold',
               textShadow: 'text',
+              ':hover': {
+                textShadow: 'none',
+                color: 'primary',
+              },
             }}
           >
             Me
