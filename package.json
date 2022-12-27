@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "name": "arantespp.art-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "Pedro Arantes",
+  "homepage": "https://github.com/arantespp/arantespp.art#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arantespp/arantespp.art.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arantespp/arantespp.art/issues"
+  },
+  "scripts": {
+    "lint": "lint-staged --since main",
+    "ls": "lerna ls",
+    "prepare": "husky install"
+  },
+  "workspaces": [
+    "apps/**/*"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^17.3.0",
+    "@lerna-lite/cli": "^1.13.0",
+    "@lerna-lite/list": "^1.13.0",
+    "@ttoss/config": "^1.26.0",
+    "@ttoss/eslint-config": "^1.19.2",
+    "eslint": "^8.30.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1",
+    "turbo": "^1.6.3"
+  },
+  "keywords": []
+}
