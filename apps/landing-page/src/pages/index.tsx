@@ -1,8 +1,10 @@
-import { Box, Flex, Heading, Image, Text } from '@ttoss/ui';
+import { Box, Button, Flex, Heading, Image, Text } from '@ttoss/ui';
 import { InferGetStaticPropsType } from 'next';
 import { NextSeo } from 'next-seo';
 import { getAccountData, getAccountMedia } from '../lib/instagram';
+import { mapData } from '../lib/instagram';
 import { transparentize } from '@theme-ui/color';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
 export const getStaticProps = async () => {
@@ -110,11 +112,11 @@ const Hero = ({ mostLikedMedia, tagline }: Props) => {
           as="h1"
           sx={{
             color: 'white',
-            fontSize: ['3xl', '4xl', '5xl'],
-            paddingX: 4,
-            paddingY: 3,
+            fontSize: ['1xl', '3xl', '5xl'],
+            marginX: 2,
+            padding: 2,
             borderRadius: 'border',
-            backgroundColor: transparentize('primary', 0.3),
+            backgroundColor: transparentize('#000', 0.25),
             boxShadow: 'box',
             fontStyle: 'italic',
             maxWidth: 1000,
@@ -174,6 +176,37 @@ const ArtCard = ({ media }: { media: Media }) => {
 };
 
 const Arts = ({ media }: Props) => {
+  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{
+    data: Media[];
+    paging: {
+      next?: string;
+    };
+  }>(
+    ['arts'],
+    async ({ pageParam }) => {
+      if (!pageParam) {
+        return media;
+      }
+      const res = await fetch(pageParam);
+      const data = await res.json();
+      return {
+        data: data.data.map(mapData),
+        paging: data.paging,
+      };
+    },
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage.paging.next;
+      },
+      keepPreviousData: true,
+    }
+  );
+
+  const arts =
+    data?.pages.flatMap((page) => {
+      return page.data;
+    }) || [];
+
   return (
     <Flex
       sx={{
@@ -199,10 +232,23 @@ const Arts = ({ media }: Props) => {
           maxWidth: 1400,
         }}
       >
-        {media.data.map((media) => {
-          return <ArtCard key={media.id} media={media} />;
+        {arts.map((art) => {
+          return <ArtCard key={art.id} media={art} />;
         })}
       </Flex>
+      {hasNextPage && (
+        <Button
+          onClick={() => {
+            return fetchNextPage();
+          }}
+          disabled={isFetching}
+          sx={{
+            fontSize: '2xl',
+          }}
+        >
+          Load More
+        </Button>
+      )}
     </Flex>
   );
 };

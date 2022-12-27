@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/font": "13.1.1",
+    "@tanstack/react-query": "^4.20.4",
     "@theme-ui/color": "^0.15.4",
     "@ttoss/ui": "^1.27.3",
     "@types/node": "18.11.18",

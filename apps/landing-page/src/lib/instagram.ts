@@ -14,21 +14,30 @@ export const getAccountData = async () => {
   };
 };
 
+export const mapData = (data: any) => {
+  return {
+    id: data.id as string,
+    caption: data.caption as string,
+    mediaUrl: data.media_url as string,
+    likeCount: data.like_count as number,
+    permalink: data.permalink as string,
+    timestamp: data.timestamp as string,
+  };
+};
+
 export const getAccountMedia = async () => {
   const response = await fetch(
     `${GRAPH_API_ENDPOINT}/${INSTAGRAM_ACCOUNT_ID}/media?fields=caption,media_url,permalink,timestamp,thumbnail_url,media_type,like_count,comments_count&access_token=${INSTAGRAM_ACCESS_TOKEN}`
   );
   const data = await response.json();
   return {
-    data: (data.data as any[]).map((item: any) => {
-      return {
-        id: item.id as string,
-        caption: item.caption as string,
-        mediaUrl: item.media_url as string,
-        likeCount: item.like_count as number,
-        permalink: item.permalink as string,
-        timestamp: item.timestamp as string,
-      };
-    }),
+    data: (data.data as any[]).map(mapData),
+    paging: {
+      cursors: {
+        before: data.paging.cursors.before as string,
+        after: data.paging.cursors.after as string,
+      },
+      next: data.paging.next as string | undefined,
+    },
   };
 };
