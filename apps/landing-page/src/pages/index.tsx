@@ -236,7 +236,7 @@ const Arts = ({ media }: Props) => {
           alignItems: 'baseline',
           gap: [4, 4, 5],
           marginY: [4, 4, 5],
-          marginX: [2, 3, 4],
+          marginX: 4,
           maxWidth: 1400,
         }}
       >
