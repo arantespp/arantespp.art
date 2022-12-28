@@ -27,7 +27,7 @@ export const mapData = (data: any) => {
 
 export const getAccountMedia = async () => {
   const response = await fetch(
-    `${GRAPH_API_ENDPOINT}/${INSTAGRAM_ACCOUNT_ID}/media?fields=caption,media_url,permalink,timestamp,thumbnail_url,media_type,like_count,comments_count&access_token=${INSTAGRAM_ACCESS_TOKEN}`
+    `${GRAPH_API_ENDPOINT}/${INSTAGRAM_ACCOUNT_ID}/media?fields=caption,media_url,permalink,timestamp,thumbnail_url,media_type,like_count,comments_count&limit=24&access_token=${INSTAGRAM_ACCESS_TOKEN}`
   );
   const data = await response.json();
   return {

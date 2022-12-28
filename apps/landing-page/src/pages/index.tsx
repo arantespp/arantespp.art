@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Heading, Image, Text } from '@ttoss/ui';
+import * as React from 'react';
+import { Box, Button, Flex, Heading, Image, Text, useTheme } from '@ttoss/ui';
 import { InferGetStaticPropsType } from 'next';
 import { NextSeo } from 'next-seo';
 import { getAccountData, getAccountMedia } from '../lib/instagram';
@@ -6,6 +7,7 @@ import { mapData } from '../lib/instagram';
 import { transparentize } from '@theme-ui/color';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import ReactModal from 'react-modal';
 
 export const getStaticProps = async () => {
   const [accountData, media] = await Promise.all([
@@ -147,14 +149,21 @@ const Hero = ({ mostLikedMedia, tagline }: Props) => {
 };
 
 const ArtCard = ({ media }: { media: Media }) => {
+  const { theme } = useTheme();
+
   /**
    * Remove all words that start with a hashtag
    */
   const caption = media.caption.replace(/#\w+/g, '').trim();
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   return (
-    <Link href={media.permalink}>
+    <>
       <Flex
+        onClick={() => {
+          return setIsModalOpen(true);
+        }}
         sx={{
           flexDirection: 'column',
           maxWidth: 400,
@@ -169,6 +178,9 @@ const ArtCard = ({ media }: { media: Media }) => {
         <Image
           src={media.mediaUrl}
           sx={{
+            height: ['100%', 400],
+            width: ['100%', 400],
+            objectFit: 'cover',
             boxShadow: 'image',
             borderTopLeftRadius: 'border',
             borderTopRightRadius: 'border',
@@ -186,7 +198,39 @@ const ArtCard = ({ media }: { media: Media }) => {
           <Text sx={{ whiteSpace: 'pre-wrap', fontSize: 'xl' }}>{caption}</Text>
         </Box>
       </Flex>
-    </Link>
+      <ReactModal
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            width: '100vw',
+            height: '100vh',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          content: {
+            maxHeight: '95%',
+            overflow: 'hidden',
+            border: 'none',
+            boxShadow: (theme?.shadows as any).image,
+          },
+        }}
+        contentLabel={caption}
+        isOpen={isModalOpen}
+        onRequestClose={() => {
+          return setIsModalOpen(false);
+        }}
+      >
+        <Image
+          src={media.mediaUrl}
+          sx={{
+            width: ['90vw', 'auto'],
+            height: ['auto', '90vh'],
+            objectFit: 'contain',
+          }}
+        />
+      </ReactModal>
+    </>
   );
 };
 
@@ -271,6 +315,7 @@ const Arts = ({ media }: Props) => {
 const Footer = () => {
   return (
     <Flex
+      as="footer"
       sx={{
         width: '100%',
         paddingX: 4,
@@ -307,7 +352,7 @@ const Index = (props: Props) => {
           ],
         }}
       />
-      <Box as="main">
+      <Box as="main" id="main">
         <Hero {...props} />
         <Arts {...props} />
         <Footer />
@@ -315,5 +360,9 @@ const Index = (props: Props) => {
     </>
   );
 };
+
+ReactModal.setAppElement('#main');
+
+ReactModal.defaultStyles.content = {};
 
 export default Index;
