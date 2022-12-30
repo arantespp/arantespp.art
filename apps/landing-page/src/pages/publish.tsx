@@ -57,7 +57,7 @@ const Publish = () => {
     setLoading(true);
     const res = await postArt(values);
     setApiResponse(res);
-    reset();
+    reset({ apiKey: values.apiKey, message: '' });
     setLoading(false);
   };
 
@@ -88,7 +88,7 @@ const Publish = () => {
             >
               Publish Art
             </Heading>
-            <FormFieldInput name="apiKey" label="API Key" disabled={true} />
+            <FormFieldInput name="apiKey" label="API Key" disabled={!!apiKey} />
             {/* <FormFieldInput name="message" label="Message" /> */}
             <Text sx={{ padding: 0, margin: 0 }}>Message</Text>
             <textarea

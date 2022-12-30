@@ -42,22 +42,40 @@ export const getAccountMedia = async () => {
   };
 };
 
-const tags = [
-  '#aesthetic',
-  '#artwork',
-  '#artificialintelligence',
-  '#computergenerated',
-  '#midjourney',
-  '#midjourneyai',
-  '#midjourneyart',
+const allHashtags = [
   '#aiart',
-  '#aiartist',
-  '#aiartwork',
   '#aiartcommunity',
-  '#digitalartist',
-  '#digitalartwork',
+  '#aiartdaily',
+  '#aiartist',
+  '#aiartoftheday',
+  '#aiartwork',
+  '#artificialart',
+  '#artificialintelligence',
   '#digitalart',
-].sort();
+  '#computergenerated',
+  '#futureart',
+  '#generativeart',
+  '#midjourney',
+  '#midjourneyart',
+  '#neuralstyle',
+  '#thisisaiart',
+] as const;
+
+/**
+ * Choose n hashtags from the list of all hashtags at random and without
+ * duplicates.
+ */
+const chooseHashtags = (n: number) => {
+  const hashtags: string[] = [];
+  while (hashtags.length < n) {
+    const randomIndex = Math.floor(Math.random() * allHashtags.length);
+    const randomHashtag = allHashtags[randomIndex];
+    if (!hashtags.includes(randomHashtag)) {
+      hashtags.push(randomHashtag);
+    }
+  }
+  return hashtags.sort();
+};
 
 const postMedia = async ({
   caption,
@@ -194,7 +212,7 @@ export const publishArt = async (message: string) => {
    */
   const username = message.match(/@\S+/g)?.[0];
 
-  const caption = `${description}\n\n${tags.join(' ')}`;
+  const caption = `${description}\n\n${chooseHashtags(5).join(' ')}`;
 
   const usernames = username ? [username.replace('@', '')] : undefined;
 

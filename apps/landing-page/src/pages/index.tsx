@@ -131,7 +131,7 @@ const Hero = ({ mostLikedMedia, tagline }: Props) => {
         <Text
           as="h1"
           sx={{
-            fontSize: ['1xl', '2xl', '3xl'],
+            fontSize: ['2xl', '2xl', '3xl'],
             marginX: 2,
             marginY: 4,
             fontStyle: 'italic',
@@ -148,22 +148,21 @@ const Hero = ({ mostLikedMedia, tagline }: Props) => {
   );
 };
 
-const ArtCard = ({ media }: { media: Media }) => {
-  const { theme } = useTheme();
-
+const ArtCard = ({
+  media,
+  onImageClick,
+}: {
+  media: Media;
+  onImageClick: () => void;
+}) => {
   /**
    * Remove all words that start with a hashtag
    */
   const caption = media.caption.replace(/#\w+/g, '').trim();
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-
   return (
     <>
       <Flex
-        onClick={() => {
-          return setIsModalOpen(true);
-        }}
         sx={{
           flexDirection: 'column',
           maxWidth: 400,
@@ -176,6 +175,7 @@ const ArtCard = ({ media }: { media: Media }) => {
         }}
       >
         <Image
+          onClick={onImageClick}
           src={media.mediaUrl}
           sx={{
             height: ['100%', 400],
@@ -198,43 +198,13 @@ const ArtCard = ({ media }: { media: Media }) => {
           <Text sx={{ whiteSpace: 'pre-wrap', fontSize: 'xl' }}>{caption}</Text>
         </Box>
       </Flex>
-      <ReactModal
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            display: 'flex',
-            width: '100vw',
-            height: '100vh',
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-          content: {
-            maxHeight: '95%',
-            overflow: 'hidden',
-            border: 'none',
-            boxShadow: (theme?.shadows as any).image,
-          },
-        }}
-        contentLabel={caption}
-        isOpen={isModalOpen}
-        onRequestClose={() => {
-          return setIsModalOpen(false);
-        }}
-      >
-        <Image
-          src={media.mediaUrl}
-          sx={{
-            width: ['90vw', 'auto'],
-            height: ['auto', '90vh'],
-            objectFit: 'contain',
-          }}
-        />
-      </ReactModal>
     </>
   );
 };
 
 const Arts = ({ media }: Props) => {
+  const { theme } = useTheme();
+
   const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{
     data: Media[];
     paging: {
@@ -266,49 +236,93 @@ const Arts = ({ media }: Props) => {
       return page.data;
     }) || [];
 
+  const [modalMedia, setModalMedia] = React.useState<Media>();
+
   return (
-    <Flex
-      sx={{
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginTop: [3, 4, 4],
-      }}
-    >
-      <Heading
-        as="h2"
-        sx={{ fontSize: ['5xl', '5xl', '6xl'], textShadow: 'text' }}
-      >
-        Arts
-      </Heading>
+    <>
       <Flex
         sx={{
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'baseline',
-          gap: [4, 4, 5],
-          marginY: [4, 4, 5],
-          marginX: 4,
-          maxWidth: 1400,
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: [4, 4, 4],
+          gap: [5],
         }}
       >
-        {arts.map((art) => {
-          return <ArtCard key={art.id} media={art} />;
-        })}
-      </Flex>
-      {hasNextPage && (
-        <Button
-          onClick={() => {
-            return fetchNextPage();
-          }}
-          disabled={isFetching}
+        <Heading
+          as="h2"
+          sx={{ fontSize: ['5xl', '5xl', '6xl'], textShadow: 'text' }}
+        >
+          Arts
+        </Heading>
+        <Flex
           sx={{
-            fontSize: '2xl',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'baseline',
+            gap: [5, 5, 5],
+            marginX: 4,
+            maxWidth: 1400,
           }}
         >
-          Load More
-        </Button>
-      )}
-    </Flex>
+          {arts.map((art) => {
+            return (
+              <ArtCard
+                key={art.id}
+                onImageClick={() => {
+                  setModalMedia(art);
+                }}
+                media={art}
+              />
+            );
+          })}
+        </Flex>
+        {hasNextPage && (
+          <Button
+            onClick={() => {
+              return fetchNextPage();
+            }}
+            disabled={isFetching}
+            sx={{
+              fontSize: '2xl',
+            }}
+          >
+            Load More
+          </Button>
+        )}
+      </Flex>
+      <ReactModal
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            width: '100vw',
+            height: '100vh',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          content: {
+            maxHeight: '95%',
+            overflow: 'hidden',
+            border: 'none',
+            boxShadow: (theme?.shadows as any).image,
+          },
+        }}
+        contentLabel={modalMedia?.caption || 'Art'}
+        isOpen={!!modalMedia}
+        onRequestClose={() => {
+          return setModalMedia(undefined);
+        }}
+      >
+        <Image
+          src={modalMedia?.mediaUrl}
+          sx={{
+            width: ['90vw', 'auto'],
+            height: ['auto', '90vh'],
+            objectFit: 'contain',
+          }}
+        />
+      </ReactModal>
+    </>
   );
 };
 
