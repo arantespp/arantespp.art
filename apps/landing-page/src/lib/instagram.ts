@@ -212,7 +212,7 @@ export const publishArt = async (message: string) => {
    */
   const username = message.match(/@\S+/g)?.[0];
 
-  const caption = `${description}\n\n${chooseHashtags(5).join(' ')}`;
+  const caption = `${description}\n\n${chooseHashtags(12).join(' ')}`;
 
   const usernames = username ? [username.replace('@', '')] : undefined;
 
