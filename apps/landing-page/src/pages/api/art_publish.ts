@@ -1,4 +1,4 @@
-import { postMedia } from '../../lib/instagram';
+import { publishMedia } from '../../lib/instagram';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const API_KEY = process.env.API_KEY;
@@ -13,11 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === 'POST') {
-    const { message } = req.body;
+    const { creationId } = req.body;
 
     try {
-      const { creationId } = await postMedia(message);
-      res.status(200).json({ creationId });
+      const { id } = await publishMedia({ creationId });
+      res.status(200).json({ id });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

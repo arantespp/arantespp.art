@@ -23,7 +23,30 @@ const postArt = async ({ message, apiKey }: FormValues) => {
     body: JSON.stringify({ message }),
   });
 
-  return response.json();
+  return response.json() as Promise<{
+    creationId: string;
+  }>;
+};
+
+const publishArt = async ({
+  apiKey,
+  creationId,
+}: {
+  apiKey: string;
+  creationId: string;
+}) => {
+  const response = await fetch('/api/art_publish', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    },
+    body: JSON.stringify({ creationId }),
+  });
+
+  return response.json() as Promise<{
+    id: string;
+  }>;
 };
 
 const Publish = () => {
@@ -55,8 +78,9 @@ const Publish = () => {
 
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
-    const res = await postArt(values);
-    setApiResponse(res);
+    const { creationId } = await postArt(values);
+    const { id } = await publishArt({ apiKey: values.apiKey, creationId });
+    setApiResponse({ id });
     reset({ apiKey: values.apiKey, message: '' });
     setLoading(false);
   };

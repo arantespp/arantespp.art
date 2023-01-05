@@ -44,7 +44,7 @@ export const getAccountMedia = async () => {
   };
 };
 
-const postMedia = async ({
+const postInstagramMedia = async ({
   caption,
   imageUrl,
   isCarouselItem,
@@ -116,18 +116,20 @@ const createCarouselContainer = async ({
    */
   const ids = await Promise.all(
     urls.map((url) => {
-      return postMedia({ imageUrl: url, isCarouselItem: true, usernames }).then(
-        ({ id }) => {
-          return id;
-        }
-      );
+      return postInstagramMedia({
+        imageUrl: url,
+        isCarouselItem: true,
+        usernames,
+      }).then(({ id }) => {
+        return id;
+      });
     })
   );
 
   /**
    * https://developers.facebook.com/docs/instagram-api/guides/content-publishing#etapa-2-de-3--criar-o-cont-iner-de-carrossel
    */
-  const { id } = await postMedia({
+  const { id } = await postInstagramMedia({
     caption,
     mediaType: 'CAROUSEL',
     children: ids,
@@ -149,16 +151,6 @@ const postMediaPublish = async ({ creationId }: { creationId: string }) => {
   if (response.error) {
     throw response.error;
   }
-
-  return response;
-};
-
-export const getMedia = async ({ mediaId }: { mediaId: string }) => {
-  const response = await fetch(
-    `${GRAPH_API_ENDPOINT}/${mediaId}?fields=permalink&access_token=${INSTAGRAM_ACCESS_TOKEN}`
-  ).then((res) => {
-    return res.json() as Promise<{ permalink: string }>;
-  });
 
   return response;
 };
@@ -199,7 +191,7 @@ const chooseHashtags = (n: number) => {
   return hashtags.sort();
 };
 
-export const publishArt = async (message: string) => {
+export const postMedia = async (message: string) => {
   /**
    * Get URLs, that is all words that start with http or https.
    */
@@ -216,8 +208,8 @@ export const publishArt = async (message: string) => {
   const username = message.match(/@\S+/g)?.[0];
 
   const caption = [
-    `${titleCase(description)} ✨`,
-    'Follow @arantespp.art for more Art 🎨',
+    `${titleCase(description)}`,
+    '✨ Follow @arantespp.art for more Art 🎨',
     chooseHashtags(13).join(' '),
   ].join('\n\n');
 
@@ -225,7 +217,7 @@ export const publishArt = async (message: string) => {
 
   const creationId = await (async () => {
     if (urls.length === 1) {
-      const { id } = await postMedia({
+      const { id } = await postInstagramMedia({
         caption,
         imageUrl: urls[0],
         usernames,
@@ -243,7 +235,20 @@ export const publishArt = async (message: string) => {
     return id;
   })();
 
-  const { id } = await postMediaPublish({ creationId });
+  return { creationId };
+};
 
+export const publishMedia = async ({ creationId }: { creationId: string }) => {
+  const { id } = await postMediaPublish({ creationId });
   return { id };
+};
+
+export const getMedia = async ({ mediaId }: { mediaId: string }) => {
+  const response = await fetch(
+    `${GRAPH_API_ENDPOINT}/${mediaId}?fields=permalink&access_token=${INSTAGRAM_ACCESS_TOKEN}`
+  ).then((res) => {
+    return res.json() as Promise<{ permalink: string }>;
+  });
+
+  return response;
 };

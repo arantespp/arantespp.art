@@ -156,9 +156,9 @@ const ArtCard = ({
   onImageClick: () => void;
 }) => {
   /**
-   * Remove all words that start with a hashtag
+   * Get only first sentence before break line
    */
-  const caption = media.caption.replace(/#\w+/g, '').trim();
+  const caption = media.caption.split('\n')[0];
 
   return (
     <>
