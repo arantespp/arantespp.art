@@ -108,8 +108,8 @@ const Publish = () => {
                 >
                   {JSON.stringify(apiResponse, null, 2)}
                 </Box>
-                <Link href={apiResponse?.permalink}>
-                  <Text>{apiResponse?.permalink}</Text>
+                <Link href="https://instagram.com/arantespp.art">
+                  <Text>arantespp.art</Text>
                 </Link>
               </>
             )}

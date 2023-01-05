@@ -1,3 +1,5 @@
+import { titleCase } from 'title-case';
+
 const GRAPH_API_ENDPOINT = 'https://graph.facebook.com/v15.0';
 
 const INSTAGRAM_ACCOUNT_ID = process.env.INSTAGRAM_ACCOUNT_ID;
@@ -40,41 +42,6 @@ export const getAccountMedia = async () => {
       next: data.paging.next as string | undefined,
     },
   };
-};
-
-const allHashtags = [
-  '#aiart',
-  '#aiartcommunity',
-  '#aiartdaily',
-  '#aiartist',
-  '#aiartoftheday',
-  '#aiartwork',
-  '#artificialart',
-  '#artificialintelligence',
-  '#digitalart',
-  '#computergenerated',
-  '#futureart',
-  '#generativeart',
-  '#midjourney',
-  '#midjourneyart',
-  '#neuralstyle',
-  '#thisisaiart',
-] as const;
-
-/**
- * Choose n hashtags from the list of all hashtags at random and without
- * duplicates.
- */
-const chooseHashtags = (n: number) => {
-  const hashtags: string[] = [];
-  while (hashtags.length < n) {
-    const randomIndex = Math.floor(Math.random() * allHashtags.length);
-    const randomHashtag = allHashtags[randomIndex];
-    if (!hashtags.includes(randomHashtag)) {
-      hashtags.push(randomHashtag);
-    }
-  }
-  return hashtags.sort();
 };
 
 const postMedia = async ({
@@ -186,7 +153,7 @@ const postMediaPublish = async ({ creationId }: { creationId: string }) => {
   return response;
 };
 
-const getMedia = async ({ mediaId }: { mediaId: string }) => {
+export const getMedia = async ({ mediaId }: { mediaId: string }) => {
   const response = await fetch(
     `${GRAPH_API_ENDPOINT}/${mediaId}?fields=permalink&access_token=${INSTAGRAM_ACCESS_TOKEN}`
   ).then((res) => {
@@ -194,6 +161,42 @@ const getMedia = async ({ mediaId }: { mediaId: string }) => {
   });
 
   return response;
+};
+
+const allHashtags = [
+  '#aesthetics',
+  '#aiart',
+  '#aiartcommunity',
+  '#aiartdaily',
+  '#aiartist',
+  '#aiartoftheday',
+  '#aiartwork',
+  '#artificialart',
+  '#artificialintelligence',
+  '#digitalart',
+  '#computergenerated',
+  '#futureart',
+  '#generativeart',
+  '#midjourney',
+  '#midjourneyart',
+  '#neuralstyle',
+  '#thisisaiart',
+] as const;
+
+/**
+ * Choose n hashtags from the list of all hashtags at random and without
+ * duplicates.
+ */
+const chooseHashtags = (n: number) => {
+  const hashtags: string[] = [];
+  while (hashtags.length < n) {
+    const randomIndex = Math.floor(Math.random() * allHashtags.length);
+    const randomHashtag = allHashtags[randomIndex];
+    if (!hashtags.includes(randomHashtag)) {
+      hashtags.push(randomHashtag);
+    }
+  }
+  return hashtags.sort();
 };
 
 export const publishArt = async (message: string) => {
@@ -212,7 +215,11 @@ export const publishArt = async (message: string) => {
    */
   const username = message.match(/@\S+/g)?.[0];
 
-  const caption = `${description}\n\n${chooseHashtags(12).join(' ')}`;
+  const caption = [
+    `${titleCase(description)} ✨`,
+    'Follow @arantespp.art for more Art 🎨',
+    chooseHashtags(13).join(' '),
+  ].join('\n\n');
 
   const usernames = username ? [username.replace('@', '')] : undefined;
 
@@ -236,9 +243,7 @@ export const publishArt = async (message: string) => {
     return id;
   })();
 
-  const { id: mediaId } = await postMediaPublish({ creationId });
+  const { id } = await postMediaPublish({ creationId });
 
-  const { permalink } = await getMedia({ mediaId });
-
-  return { permalink };
+  return { id };
 };
