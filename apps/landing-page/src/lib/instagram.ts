@@ -177,18 +177,18 @@ const allHashtags = [
 
 /**
  * Choose n hashtags from the list of all hashtags at random and without
- * duplicates.
+ * duplicates. Use a effective algorithm to choose the hashtags at random
+ * to not spend too much time on this.
  */
 const chooseHashtags = (n: number) => {
-  const hashtags: string[] = [];
-  while (hashtags.length < n) {
-    const randomIndex = Math.floor(Math.random() * allHashtags.length);
-    const randomHashtag = allHashtags[randomIndex];
-    if (!hashtags.includes(randomHashtag)) {
-      hashtags.push(randomHashtag);
-    }
+  const result = new Set<string>();
+  const tempHashtags = [...allHashtags];
+  while (result.size < n) {
+    const index = Math.floor(Math.random() * tempHashtags.length);
+    result.add(tempHashtags[index]);
+    tempHashtags.splice(index, 1);
   }
-  return hashtags.sort();
+  return Array.from(result);
 };
 
 export const postMedia = async (message: string) => {
